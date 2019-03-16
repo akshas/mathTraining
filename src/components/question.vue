@@ -1,7 +1,8 @@
 <template>
   <div class="alert alert-secondary">
     <h2>question</h2>
-    <div class="text">{{x}} + {{y}} = ?</div>
+    <div v-if="!flag" class="text">{{x}} {{operator}} {{y}} = ?</div>
+    <div v-else class="text">{{y}} {{operator}} {{x}} = ?</div>
     <div class="display">
       <button
         class="btn btn-success"
@@ -15,21 +16,50 @@
 </template>
 <script>
   export default {
+    props: ['stats', 'operator'],  // stats - информация об уровне, Operator - +-*/
     data() {
       return {
-        x: mRand(100, 200),
-        y: mRand(100, 200)
-        // operator: '+' - выбирает пользователь
+        x: mRand(this.stats.from, this.stats.to),
+        y: mRand(this.stats.from , this.stats.to),
+        flag: false
       };
     },
     computed: {
       right() {
-        return this.x + this.y;
+        // Переключение оператора
+        let right = '';
+        switch (this.operator) {
+          case "+":
+            right = this.x + this.y;
+            break;
+          case "-":
+            if(this.x > this.y) {
+              right = this.x - this.y;
+            } else {
+              right = this.y - this.x;
+              this.flag = true;
+          }
+            break;
+          case "*":
+            right = this.x * this.y;
+            break;
+          case "/":
+            if(this.x > this.y) {
+              right = this.x / this.y;
+            } else {
+              right = this.y / this.x;
+              this.flag = true;
+            }
+            break;
+          default:
+            right = this.x + this.y;
+        }
+        return right;
       },
       answers() {
         let res = [this.right];
-        while (res.length < 4) {
-          let num = mRand(this.right - 20, this.right + 20);
+        while (res.length < this.stats.variants) {
+          let num = mRand(this.right - this.stats.range, this.right + this.stats.range);
 
           if (res.indexOf(num) === -1) res.push(num);
         }

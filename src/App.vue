@@ -7,9 +7,11 @@
     </div>
     <div class="box">
       <transition name="flip" mode="out-in">
-        <app-start v-if="state === 'start'" @onClick="onStart"></app-start>
+        <app-start v-if="state === 'start'" @onStart="onStart($event)"></app-start>
         <app-question
           v-else-if="state === 'question'"
+          :stats="levels[level]"
+          :operator="operator"
           @success="onQuestSuccess"
           @error="onQuestError('Try again!')"
         ></app-question>
@@ -22,9 +24,12 @@
         <app-res
           v-else-if="state === 'result'"
           @onClick="renew"
+          @levelUp="levelUp"
           :done="stats.done"
           :error="stats.error"
           :mes="message.text"
+          :max="questMax"
+          :lev="level"
         ></app-res>
         <div v-else>nothing else matters</div>
       </transition>
@@ -38,7 +43,7 @@
     data() {
       return {
         state: "start",
-        bar: document.querySelector('.progress'),
+        // bar: document.querySelector('.progress'),
         message: {
           type: "",
           text: ""
@@ -47,7 +52,30 @@
           done: 0,
           error: 0
         },
-        questMax: 3
+        operator: '',
+        questMax: 3,
+        level: 0,
+        levels: [
+          {
+            variants: 4,
+            from: 100,
+            to: 200,
+            range: 20
+          },
+          {
+            variants: 5,
+            from: 150,
+            to: 250,
+            range: 30
+          },
+          {
+            variants: 6,
+            from: 200,
+            to: 300,
+            range: 40
+          },
+
+        ]
       };
     },
     computed: {
@@ -65,17 +93,19 @@
       }
     },
     methods: {
-      onStart() {
+      onStart(operator) {
         if (this.questDone === this.questMax) {
 
           this.result();
 
         } else {
-
+          if(operator !== undefined) {
+            this.operator = operator;
+          }
           this.state = "question";
 
         }
-      },
+      }, // onStart
       renew() {
         this.stats.done = 0;
         this.stats.error = 0;
@@ -87,18 +117,20 @@
         this.message.type = "success";
         this.stats.done++;
 
-      },
+      }, // renew
       onQuestError(msg) {
         this.state = "message";
         this.message.text = msg;
         this.message.type = "warning";
         this.stats.error++;
-      },
+      }, //onQuestError
       result() {
-
         this.state = 'result';
-        // this.bar.style.display = 'none';
         this.message.text = this.stats.done === this.questMax ? "You are genius" : 'You are loser';
+      },//result
+      levelUp() {
+        this.level++;
+        this.renew();
       }
     }
   };
