@@ -44,12 +44,9 @@
             right = this.x * this.y;
             break;
           case "/":
-            if(this.x > this.y) {
-              right = this.x / this.y;
-            } else {
-              right = this.y / this.x;
-              this.flag = true;
-            }
+            let dev = this.x * this.y;
+            this.x = dev;
+            right = this.x / this.y;
             break;
           default:
             right = this.x + this.y;
@@ -60,8 +57,9 @@
         let res = [this.right];
         while (res.length < this.stats.variants) {
           let num = mRand(this.right - this.stats.range, this.right + this.stats.range);
-
-          if (res.indexOf(num) === -1) res.push(num);
+          num = num.toFixed(2);
+          num = Number(num);
+          if (res.indexOf(num) === -1 && num > 3) res.push(num);
         }
         res.sort(function () {
           return 0.5 - Math.random();
@@ -76,6 +74,9 @@
         } else {
           this.$emit("error");
         }
+      },
+      selectNums() {
+
       }
     }
   };

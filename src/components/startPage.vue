@@ -1,10 +1,10 @@
 <template>
   <div class="alert alert-secondary">
     <div class="operators">
-      <button class="btn btn-primary add" @click="changeOperator('+')">+</button>
-      <button class="btn btn-primary minus" @click="changeOperator('-')">-</button>
-      <button class="btn btn-primary multi" @click="changeOperator('*')">*</button>
-      <button class="btn btn-primary divide" @click="changeOperator('/')">/</button>
+      <button class="btn btn-primary add" :class="{active: activeBtn===1}" @click="changeOperator('+'); activeBtn=1">+</button>
+      <button class="btn btn-primary minus" :class="{active: activeBtn===2}" @click="changeOperator('-'); activeBtn=2">-</button>
+      <button class="btn btn-primary multi" :class="{active: activeBtn===3}" @click="changeOperator('*'); activeBtn=3">*</button>
+      <button class="btn btn-primary divide" :class="{active: activeBtn===4}" @click="changeOperator('/'); activeBtn=4">/</button>
     </div>
       <h3>Are you ready?</h3>
     <button class="btn btn-success" @click="start">start</button>
@@ -14,12 +14,12 @@
 export default {
   data () {
     return {
-      operator: "+"
+      operator: "+",
+      activeBtn: undefined
     }
   },
   methods: {
     start () {
-      console.log(this.operator);
       this.$emit('onStart', this.operator);
     },
     changeOperator (operator) {
@@ -28,5 +28,10 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped lang="scss">
+  .active{
+      border: 3px solid darkgreen !important;
+      outline: none !important;
+      box-shadow: none !important;
+  }
 </style>
