@@ -1,6 +1,7 @@
 <template>
   <div class="alert alert-secondary">
-    <h2>question</h2>
+    <h2>level: {{lev}}</h2>
+    <button class="btn btn-primary" @click="$emit('renew', false)">home</button>
     <div v-if="!flag" class="text">{{x}} {{operator}} {{y}} = ?</div>
     <div v-else class="text">{{y}} {{operator}} {{x}} = ?</div>
     <div class="display">
@@ -16,7 +17,7 @@
 </template>
 <script>
   export default {
-    props: ['stats', 'operator'],  // stats - информация об уровне, Operator - +-*/
+    props: ['stats', 'operator', 'lev'],  // stats - информация об уровне, Operator - +-*/
     data() {
       return {
         x: mRand(this.stats.from, this.stats.to),

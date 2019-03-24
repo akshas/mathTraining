@@ -9,9 +9,11 @@
       <transition name="flip" mode="out-in">
         <app-start v-if="state === 'start'" @onStart="onStart($event)"></app-start>
         <app-question
+          @renew="init"
           v-else-if="state === 'question'"
           :stats="operator === '+' || operator === '-' ? levels[level] : anotherLevels[level]"
           :operator="operator"
+          :lev="level"
           @success="onQuestSuccess"
           @error="onQuestError('Try again!')"
         ></app-question>
@@ -60,19 +62,19 @@ export default {
           variants: 4,
           from: 100,
           to: 200,
-          range: 20
+          range: 6
         },
         {
           variants: 5,
           from: 150,
           to: 250,
-          range: 30
+          range: 8
         },
         {
           variants: 6,
           from: 200,
           to: 300,
-          range: 40
+          range: 15
         }
       ],
       /**
@@ -82,8 +84,8 @@ export default {
       anotherLevels: [
         {
           variants: 4,
-          from: 2,
-          to: 9,
+          from: 3,
+          to: 12,
           range: 4
         },
         {
@@ -117,16 +119,20 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.stats.error = 0;
+      this.stats.done = 0;
+      this.state = 'start'
+    },
     onStart(operator) {
       if (this.questDone === this.questMax) {
         this.result();
       } else {
-        if (operator !== undefined) {
+        if (operator) {
           this.operator = operator;
         }
-        this.state = "question";
+          this.state = "question";
       }
-      console.log(this.operator);
     }, // onStart
     renew() {
       this.stats.done = 0;
